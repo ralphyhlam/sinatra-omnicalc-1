@@ -26,3 +26,17 @@ get("/squareroot/results") do
 
   erb(:squareroot_results)
 end
+
+get("/random/new") do
+  erb(:random)
+end
+
+get("/random/results") do
+  @random_minimum = params.fetch("minimum").to_f
+  @random_maximum = params.fetch("maximum").to_f
+
+  @output = rand(@random_minimum..@random_maximum).to_fs
+
+  erb(:random_results)
+
+end

@@ -10,7 +10,7 @@ get("/square/new") do
 end
 
 get("/square/results") do
-  @input = params.fetch("number").to_i
+  @input = params.fetch("number").to_f
   @squared = @input ** (2)
 
   erb(:square_results)
@@ -21,8 +21,8 @@ get("/square_root/new") do
 end
 
 get("/squareroot/results") do
-  @input = params.fetch("user_number").to_i
-  @rooted = @input ** (1/2)
+  @input = params.fetch("user_number").to_f
+  @rooted = @input ** (0.5)
 
   erb(:squareroot_results)
 end
@@ -47,9 +47,20 @@ end
 
 get("/payment/results") do 
   @input_apr = params.fetch("user_apr").to_f
-  calc_apr = (@input_apr) * (1/100) * (1/12)
+  @format_apr = @input_apr.to_fs(:percentage, {:precision => 4})
+
+  calc_apr = ((@input_apr) / (100)) / 12
   
   @input_period = params.fetch("user_years").to_i
   calc_period = (@input_period) * (12)
 
-  
+  @input_principal = params.fetch("user_principal").to_f
+  @format_principal = @input_principal.to_fs(:currency)
+
+  numerator = calc_apr * (@input_principal)
+  @denominator = 1 - ((1 + calc_apr)**(-1 * calc_period))
+
+  @payment = (numerator/@denominator).to_fs(:currency)
+
+  erb(:payment_results)
+end
